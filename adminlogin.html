@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login to your account">
+  <title>Login - TheBoys Fashion Store</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/responsive.css">
+  
+  <style>
+    .auth-page {
+      min-height: calc(100vh - 200px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-xl) 0;
+    }
+    
+    .auth-container {
+      max-width: 450px;
+      width: 100%;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-xl);
+      box-shadow: var(--shadow-xl);
+    }
+    
+    .auth-header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+    }
+    
+    .auth-header h1 {
+      margin-bottom: var(--spacing-xs);
+    }
+    
+    .auth-header p {
+      color: var(--text-secondary);
+    }
+    
+    .auth-form {
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .form-group {
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: var(--spacing-xs);
+      font-weight: 500;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius-sm);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: var(--transition-fast);
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+      font-size: 0.875rem;
+    }
+    
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    
+    .forgot-password {
+      color: var(--primary);
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: var(--spacing-lg) 0;
+      color: var(--text-secondary);
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .divider span {
+      padding: 0 var(--spacing-md);
+    }
+    
+    .google-signin {
+      width: 100%;
+      padding: 0.875rem;
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius-sm);
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-sm);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      font-weight: 500;
+    }
+    
+    .google-signin:hover {
+      border-color: var(--primary);
+      background: var(--bg-secondary);
+    }
+    
+    .auth-footer {
+      text-align: center;
+      margin-top: var(--spacing-lg);
+      color: var(--text-secondary);
+    }
+    
+    .auth-footer a {
+      color: var(--primary);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+<!-- Login Page -->
+  <main class="auth-page"> 
+    <div class="auth-container">
+     <div class="auth-header">
+    <h1>Welcome Back</h1> 
+    <p>Login in to your account to continue</p> 
+  </div> <form class="auth-form" id="login-form">
+     <div class="form-group"> 
+    <label for="email">Email Address</label>
+    <input type="email" id="email" class="form-input" placeholder="you@example.com" required> 
+  </div> 
+  <div class="form-group">
+  <label for="password">Password</label>
+  <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+ </div> 
+<div class="form-options">
+ <label class="remember-me">
+  <input type="checkbox" id="remember">
+  <span>Remember me</span> 
+</label> <a href="#" class="forgot-password">Forgot password?</a>
+ </div> <button type="submit" class="btn btn-primary" style="width:100%"> 
+  Sign In </button>
+      </form>
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>About TheBoys</h4>
+          <p>Premium fashion store.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 TheBoys Fashion Store. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.getElementById('login-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  try {
+
+    const response = await fetch("http://localhost:3000/admin-login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if(data.success){
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Login Successful',
+          text: 'Welcome back!',
+          confirmButtonColor: '#6366f1'
+        }).then(() => {
+          window.location.href = "admin.html";
+        });
+
+    }else{
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: 'Invalid email or password',
+          confirmButtonColor: '#ef4444'
+        });
+
+    }
+
+  } catch(error){
+    console.error(error);
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Server Error',
+      text: 'Please try again later'
+    });
+  }
+
+});
+</script>
+</body>
+</html>
+
+
+

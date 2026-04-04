@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shop</title>
+</head>
+<body>
+
+<h1 id="shopName"></h1>
+
+<script>
+
+const urlParams = new URLSearchParams(window.location.search);
+const shopId = urlParams.get("id");
+
+fetch("data/shops.json")
+.then(res => res.json())
+.then(shops => {
+
+    const shop = shops.find(s => s.id == shopId);
+
+    document.getElementById("shopName").innerText = shop.name;
+
+});
+
+</script>
+
+</body>
+</html>

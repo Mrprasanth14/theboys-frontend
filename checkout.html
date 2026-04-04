@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Checkout page">
+  <title>Checkout - TheBoys Fashion Store</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/responsive.css">
+  
+  <style>
+    .checkout-page {
+      padding: var(--spacing-xl) 0;
+    }
+    
+    .checkout-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: var(--spacing-xl);
+    }
+    
+    .checkout-section {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .checkout-section h2 {
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-md);
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+    
+    .shipping-options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+    
+    .shipping-option {
+      display: flex;
+      align-items: center;
+      padding: var(--spacing-md);
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    
+    .shipping-option:hover,
+    .shipping-option.selected {
+      border-color: var(--primary);
+      background: var(--bg-secondary);
+    }
+    
+    .shipping-option input[type="radio"] {
+      margin-right: var(--spacing-sm);
+    }
+    
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-md);
+    }
+    
+    .payment-method {
+      padding: var(--spacing-md);
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius-sm);
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    
+    .payment-method:hover,
+    .payment-method.selected {
+      border-color: var(--primary);
+      background: var(--bg-secondary);
+    }
+    
+    .order-summary {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-lg);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+    
+    .order-summary h2 {
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-sm);
+      padding-bottom: var(--spacing-sm);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .summary-item:last-of-type {
+      border-bottom: none;
+    }
+    
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      margin-top: var(--spacing-md);
+      padding-top: var(--spacing-md);
+      border-top: 2px solid var(--text-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    
+    @media (max-width: 1024px) {
+      .checkout-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .order-summary {
+        position: static;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .payment-methods {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar-content">
+      <a href="index.html" class="logo">TheBoys</a>
+      
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="products.html?category=men">Men</a></li>
+        <li><a href="products.html?category=women">Women</a></li>
+        <li><a href="products.html?category=kids">Kids</a></li>
+        <li><a href="products.html">All Products</a></li>
+      </ul>
+      
+      <div class="nav-actions">
+        <button class="icon-btn" id="search-btn" aria-label="Search" onclick="window.location.href='search.html'">
+          🔍
+        </button>
+        <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+          🌙
+        </button>
+        <a href="wishlist.html" class="icon-btn" aria-label="Wishlist">
+          ♡
+        </a>
+        <a href="cart.html" class="icon-btn" aria-label="Cart">
+          🛒
+          <span class="badge cart-badge" style="display: none;">0</span>
+        </a>
+        <a href="login.html" class="icon-btn" aria-label="Account">
+          👤
+        </a>
+        <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+          ☰
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Checkout Page -->
+  <main class="checkout-page">
+    <div class="container">
+      <h1 style="margin-bottom: var(--spacing-lg);">Checkout</h1>
+      
+      <div class="checkout-container">
+        <div class="checkout-form">
+          <!-- Shipping Address -->
+          <div class="checkout-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
+              <h2 style="margin: 0;">Shipping Address</h2>
+              <button type="button" class="btn btn-outline" id="manage-addresses-btn">Manage Addresses</button>
+            </div>
+            
+            <div id="saved-addresses" style="margin-bottom: var(--spacing-md);">
+              <!-- Saved addresses will be loaded here -->
+            </div>
+            
+            <form id="address-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="first-name">First Name</label>
+                  <input type="text" id="first-name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="last-name">Last Name</label>
+                  <input type="text" id="last-name" class="form-input" required>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-input" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" class="form-input" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="address">Street Address</label>
+                <input type="text" id="address" class="form-input" required>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="city">City</label>
+                  <input type="text" id="city" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="state">State</label>
+                  <input type="text" id="state" class="form-input" required>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="zip">ZIP Code</label>
+                  <input type="text" id="zip" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="country">Country</label>
+                  <input type="text" id="country" class="form-input" value="India" required>
+                </div>
+              </div>
+            </form>
+          </div>
+          
+          <!-- Shipping Options -->
+          <div class="checkout-section">
+            <h2>Shipping Method</h2>
+            <div class="shipping-options">
+              <label class="shipping-option selected">
+                <input type="radio" name="shipping" value="standard" checked>
+                <div>
+                  <strong>Standard Shipping</strong>
+                  <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 4px;">5-7 business days - ₹99</p>
+                </div>
+              </label>
+              <label class="shipping-option">
+                <input type="radio" name="shipping" value="express">
+                <div>
+                  <strong>Express Shipping</strong>
+                  <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 4px;">2-3 business days - ₹299</p>
+                </div>
+              </label>
+              <label class="shipping-option">
+                <input type="radio" name="shipping" value="overnight">
+                <div>
+                  <strong>Overnight Delivery</strong>
+                  <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 4px;">Next business day - ₹499</p>
+                </div>
+              </label>
+            </div>
+          </div>
+          
+          <!-- Payment Method -->
+          <div class="checkout-section">
+            <h2>Payment Method</h2>
+            <div class="payment-methods">
+              <label class="payment-method selected">
+                <input type="radio" name="payment" value="card" checked style="display: none;">
+                <div>💳 Credit/Debit Card</div>
+              </label>
+              <label class="payment-method">
+                <input type="radio" name="payment" value="upi" style="display: none;">
+                <div>📱 UPI</div>
+              </label>
+              <label class="payment-method">
+                <input type="radio" name="payment" value="cod" style="display: none;">
+                <div>💰 Cash on Delivery</div>
+              </label>
+              <label class="payment-method">
+                <input type="radio" name="payment" value="wallet" style="display: none;">
+                <div>💼 Wallet</div>
+              </label>
+            </div>
+            
+            <div id="payment-details" style="margin-top: var(--spacing-lg);">
+              <div class="form-group">
+                <label for="card-number">Card Number</label>
+                <input type="text" id="card-number" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="expiry">Expiry Date</label>
+                  <input type="text" id="expiry" class="form-input" placeholder="MM/YY" maxlength="5">
+                </div>
+                <div class="form-group">
+                  <label for="cvv">CVV</label>
+                  <input type="text" id="cvv" class="form-input" placeholder="123" maxlength="3">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="order-summary">
+          <h2>Order Summary</h2>
+          <div id="order-items">
+            <!-- Order items will be loaded here -->
+          </div>
+          
+          <div class="summary-item">
+            <span>Subtotal</span>
+            <span id="order-subtotal">₹0</span>
+          </div>
+          <div class="summary-item">
+            <span>Shipping</span>
+            <span id="order-shipping">₹99</span>
+          </div>
+          <div class="summary-item">
+            <span>Tax</span>
+            <span id="order-tax">₹0</span>
+          </div>
+          
+          <div class="summary-total">
+            <span>Total</span>
+            <span id="order-total">₹0</span>
+          </div>
+          
+          <button class="btn btn-primary" style="width: 100%; margin-top: var(--spacing-lg);" id="place-order">
+            Place Order
+          </button>
+          
+          <p style="text-align: center; margin-top: var(--spacing-md); font-size: 0.875rem; color: var(--text-secondary);">
+            Your personal data will be used to process your order and support your experience.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>About TheBoys</h4>
+          <p>Premium fashion store.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 TheBoys Fashion Store. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module" src="js/main.js"></script>
+  <script type="module">
+    import { cart } from './js/cart.js';
+    import { formatPrice, showNotification ,storage} from './js/utils.js';
+    
+    // Load order summary
+    function loadOrderSummary() {
+      const buyNowData = JSON.parse(localStorage.getItem("buyNowProduct"));
+      console.log("BuyNow:",buyNowData);
+
+let items = [];
+
+if (buyNowData) {
+  // ✅ Buy Now flow
+  items = [{
+    name: buyNowData.product.name,
+    price: buyNowData.product.price,
+    size: buyNowData.size,
+    color: buyNowData.color,
+    quantity: buyNowData.qty
+  }];
+} else {
+  // ✅ Cart flow
+  items = cart.items.map(item => ({
+  id: item.id,   // ✅ VERY IMPORTANT
+  name: item.name,
+  price: item.price,
+  quantity: item.quantity,
+  size: item.size,
+  color: item.color
+}));
+}
+      const container = document.getElementById('order-items');
+      
+      if (!items || items.length === 0) {
+        container.innerHTML = '<p>Your cart is empty. <a href="products.html">Continue Shopping</a></p>';
+        return;
+      }
+      
+      container.innerHTML = items.map(item => `
+        <div class="summary-item">
+          <div>
+            <strong>${item.name}</strong>
+            <p style="font-size: 0.875rem; color: var(--text-secondary);">${item.size} • ${item.color} × ${item.quantity}</p>
+          </div>
+          <span>${formatPrice(item.price * item.quantity)}</span>
+        </div>
+      `).join('');
+      
+      let subtotal = 0;
+
+if (buyNowData) {
+  subtotal = buyNowData.product.price * buyNowData.qty;
+} else {
+  subtotal = cart.getTotal();
+}
+      const shipping = 99;
+      const tax = subtotal * 0.18;
+      const total = subtotal + shipping + tax;
+      
+      document.getElementById('order-subtotal').textContent = formatPrice(subtotal);
+      document.getElementById('order-tax').textContent = formatPrice(tax);
+      document.getElementById('order-total').textContent = formatPrice(total);
+    }
+    
+    loadOrderSummary();
+    
+    // Shipping option selection
+    document.querySelectorAll('.shipping-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.shipping-option').forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+        
+        const shippingCosts = { standard: 99, express: 299, overnight: 499 };
+        const selected = option.querySelector('input').value;
+        document.getElementById('order-shipping').textContent = formatPrice(shippingCosts[selected]);
+        loadOrderSummary();
+      });
+    });
+    
+    // Payment method selection
+    document.querySelectorAll('.payment-method').forEach(method => {
+      method.addEventListener('click', () => {
+        document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+        method.classList.add('selected');
+      });
+    });
+    
+    // Place order with payment processing
+    document.getElementById('place-order').addEventListener('click', async () => {
+      const form = document.getElementById('address-form');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      
+      const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
+      const buyNowData = JSON.parse(localStorage.getItem("buyNowProduct"));
+
+let items = [];
+let subtotal = 0;
+
+if (buyNowData) {
+  items = [{
+  id: buyNowData.product.id, // ✅ ADD THIS
+  name: buyNowData.product.name,
+  price: buyNowData.product.price,
+  quantity: buyNowData.qty,
+  size: buyNowData.size,
+  color: buyNowData.color
+}];
+
+  subtotal = buyNowData.product.price * buyNowData.qty;
+
+} else {
+  items = cart.items;
+  subtotal = cart.getTotal();
+}
+      const orderData = {
+        id: 'ORD' + Date.now(),
+        date: new Date().toLocaleDateString(),
+       items: items,
+       subtotal: subtotal,
+       tax: subtotal * 0.18,
+       shipping: 99,
+        total: subtotal + (subtotal * 0.18) + 99,
+        status: selectedPayment === 'cod' ? 'processing' : 'confirmed',
+        paymentMethod: selectedPayment,
+        address: {
+          firstName: document.getElementById('first-name').value,
+          lastName: document.getElementById('last-name').value,
+          email: document.getElementById('email').value,
+          phone: document.getElementById('phone').value,
+          address: document.getElementById('address').value,
+          city: document.getElementById('city').value,
+          state: document.getElementById('state').value,
+          zip: document.getElementById('zip').value,
+          country: document.getElementById('country').value
+        }
+      };
+      
+      // Process payment based on method
+if (selectedPayment === 'cod') {
+  await saveOrder(orderData);
+  showNotification('Order placed successfully!', 'success');
+
+  cart.clear();
+  localStorage.removeItem("buyNowProduct");
+
+  setTimeout(() => {
+    window.location.href = 'orders.html';
+  }, 2000);
+      } else {
+        // Process payment for card/upi/wallet
+        try {
+          const { processPayment } = await import('./js/payment.js');
+          const paymentResult = await processPayment(orderData, selectedPayment);
+          
+          if (paymentResult.success) {
+            orderData.transactionId = paymentResult.transactionId;
+            saveOrder(orderData);
+            showNotification('Payment successful! Order placed.', 'success');
+            cart.clear();
+            localStorage.removeItem("buyNowProduct");
+            setTimeout(() => {
+              window.location.href = 'orders.html';
+            }, 2000);
+          } else {
+            showNotification('Payment failed. Please try again.', 'error');
+          }
+        } catch (error) {
+          console.error('Payment error:', error);
+          showNotification('Payment processing error. Please try again.', 'error');
+        }
+      }
+    });
+    
+    async function saveOrder(orderData) {
+  try {
+    const res = await fetch("http://localhost:3000/api/create-order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        total: orderData.total,
+        status: orderData.status,
+        items: orderData.items.map(item => ({
+          product_id: item.id, // ⚠ temporary fix
+          quantity: item.quantity,
+          price: item.price
+        }))
+      })
+    });
+
+    const data = await res.json();
+    console.log("Saved to DB:", data);
+
+  } catch (err) {
+    console.error("Save order error:", err);
+  }
+}
+    
+    // Card number formatting
+    document.getElementById('card-number')?.addEventListener('input', (e) => {
+      let value = e.target.value.replace(/\s/g, '');
+      value = value.match(/.{1,4}/g)?.join(' ') || value;
+      e.target.value = value;
+    });
+    
+    // Expiry date formatting
+    document.getElementById('expiry')?.addEventListener('input', (e) => {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 2) {
+        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+      }
+      e.target.value = value;
+    });
+  </script>
+</body>
+</html>
+

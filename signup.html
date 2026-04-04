@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TheBoys Signup</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#667eea,#764ba2);
+}
+
+/* Glass Card */
+
+.login-card{
+width:380px;
+padding:40px;
+border-radius:15px;
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(12px);
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+color:white;
+}
+
+/* Title */
+
+.login-card h2{
+text-align:center;
+margin-bottom:10px;
+font-weight:600;
+}
+
+.login-card p{
+text-align:center;
+font-size:14px;
+margin-bottom:30px;
+opacity:0.8;
+}
+
+/* Input Fields */
+
+.input-group{
+margin-bottom:20px;
+}
+
+.input-group label{
+display:block;
+font-size:14px;
+margin-bottom:5px;
+}
+
+.input-group input{
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+background:rgba(255,255,255,0.2);
+color:white;
+outline:none;
+}
+
+.input-group input::placeholder{
+color:#eee;
+}
+
+/* Button */
+
+.login-btn{
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+background:#ff7a18;
+background:linear-gradient(45deg,#ff7a18,#ffb347);
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:0.3s;
+}
+
+.login-btn:hover{
+transform:scale(1.05);
+}
+
+/* Footer */
+
+.footer{
+margin-top:20px;
+text-align:center;
+font-size:14px;
+}
+
+.footer a{
+color:#ffd369;
+text-decoration:none;
+}
+
+.footer a:hover{
+text-decoration:underline;
+}
+
+</style>
+
+<body>
+
+<div class="login-card">
+
+<h2>Create Account</h2>
+<p>Signup to start shopping</p>
+
+<form id="signup-form">
+
+<div class="input-group">
+<label>Name</label>
+<input type="text" id="name" placeholder="Enter your name" required>
+</div>
+
+<div class="input-group">
+<label>Email</label>
+<input type="email" id="email" placeholder="Enter your email" required>
+</div>
+
+<div class="input-group">
+<label>Password</label>
+<input type="password" id="password" placeholder="Enter password" required>
+</div>
+<div class="input-group">
+<label>Mobile</label>
+<input type="text" id="mobile" placeholder="Enter mobile number" required>
+</div>
+
+<button class="login-btn" type="submit">Sign Up</button>
+
+</form>
+
+<div class="footer">
+Already have an account? <a href="login.html">Login</a>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+document.getElementById("signup-form").addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const name = document.getElementById("name").value;
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+const mobile = document.getElementById("mobile").value;
+
+const response = await fetch("/signup",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({name,email,password,mobile})
+
+});
+
+const data = await response.json();
+
+if(data.success){
+
+Swal.fire({
+icon:'success',
+title:'Signup Successful',
+text:'Account created successfully'
+}).then(()=>{
+window.location.href="login.html";
+});
+
+}else{
+
+if(data.message==="exists"){
+Swal.fire({icon:'error',title:'Email Exists'});
+}
+else if(data.message==="invalid_email"){
+Swal.fire({icon:'error',title:'Invalid Email'});
+}
+else if(data.message==="weak_password"){
+Swal.fire({icon:'error',title:'Password must be 6+ characters'});
+}
+else if(data.message==="invalid_mobile"){
+Swal.fire({icon:'error',title:'Mobile must be 10 digits'});
+}
+else{
+Swal.fire({icon:'error',title:'Signup Failed'});
+}
+
+}
+});
+</script>
+</body>
+</html>

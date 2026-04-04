@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Track Order</title>
+</head>
+<style>
+body {
+  background: linear-gradient(to right, #f1f3f6, #f8fafc);
+}
+.step:hover .circle {
+  transform: scale(1.1);
+}
+  .track-container {
+  max-width: 800px;
+  margin: 40px auto;
+  font-family: 'Poppins', sans-serif;
+}
+.track-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  margin-bottom: 25px;
+  border: 1px solid #eee;
+}
+/* Steps */
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  margin: 30px 0;
+  position: relative;
+}
+
+.progress-steps::before {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: #eee;
+  border-radius: 10px;
+  z-index: 0;
+}
+
+.step {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #ccc;
+  color: white;
+  line-height: 35px;
+  margin: auto;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.step.active .circle {
+  background: #ff9900;
+  box-shadow: 0 0 10px rgba(255,153,0,0.6);
+}
+
+.step.completed .circle {
+  background: green;
+  box-shadow: 0 0 8px rgba(0,128,0,0.5);
+}
+.step.completed ~ .step::before {
+  background: #ddd;
+}
+
+.circle {
+  transition: all 0.4s ease;
+}
+
+.step.completed .circle {
+  transform: scale(1.1);
+}
+.step.completed::after {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  width: 100%;
+  height: 6px;
+  background: green;
+  z-index: -1;
+}
+.progress-steps {
+  position: relative;
+}
+
+.progress-line {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  height: 6px;
+  background: linear-gradient(90deg, orange, green);
+  border-radius: 10px;
+  z-index: 0;
+  width: 0%;
+  transition: 0.5s;
+}
+
+#order-status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-processing { background:#fff3cd; color:#856404; }
+.status-shipped { background:#dbeafe; color:#1e40af; }
+.status-out { background:#e0f2fe; color:#0369a1; }
+.status-delivered { background:#d1fae5; color:#065f46; }
+/* Timeline */
+.timeline-item {
+  background: #fff;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  border-left: 4px solid #ddd;
+}
+
+.timeline-item.active {
+  border-left-color: #ff9900;
+}
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 5px;
+  width: 12px;
+  height: 12px;
+  background: #ccc;
+  border-radius: 50%;
+}
+
+.timeline-item.active::before {
+  background: #ff9900;
+}
+</style>
+<body>
+<div class="track-container">
+  <h2>Track Order</h2>
+<h2 style="margin-bottom: 5px;">Order Details</h2>
+<p style="color:#666;">Arriving soon • Track your shipment</p>
+  <div class="track-card">
+    <p><strong>Order ID:</strong> <span id="order-id"></span></p>
+    <p><strong>Status:</strong> <span id="order-status"></span></p>
+  </div>
+
+  <!-- Progress Steps -->
+  <div class="progress-steps">
+  <div class="step" id="step-ordered">
+    <div class="circle">📦</div>
+    <p>Ordered</p>
+  </div>
+
+  <div class="step" id="step-shipped">
+    <div class="circle">🚚</div>
+    <p>Shipped</p>
+  </div>
+
+  <div class="step" id="step-out">
+    <div class="circle">📍</div>
+    <p>Out for Delivery</p>
+  </div>
+
+  <div class="step" id="step-delivered">
+    <div class="circle">✅</div>
+    <p>Delivered</p>
+  </div>
+</div>
+
+  <!-- Timeline -->
+  <div class="timeline" id="timeline"></div>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const orderId = urlParams.get("id");
+
+console.log("Order ID:", orderId);
+
+document.getElementById("order-id").innerText = orderId || "Not Found";
+
+fetch(`http://localhost:3000/api/orders/${orderId}`)
+  .then(res => res.json())
+  .then(order => {
+
+    console.log("Order Data:", order);
+
+    if (!order || !order.status) {
+      document.getElementById("order-status").innerText = "Order not found";
+      return;
+    }
+
+    const status = order.status;
+
+    document.getElementById("order-status").innerText = status;
+
+    updateSteps(status);
+    renderTimeline(order);
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById("order-status").innerText = "Error loading";
+  });
+  if (!orderId) {
+  alert("No Order ID found in URL");
+  window.location.href = "orders.html"; // or home page
+}
+ function updateSteps(status) {
+
+  const steps = {
+    "Processing": 1,
+    "Shipped": 2,
+    "Out for Delivery": 3,
+    "Delivered": 4
+  };
+
+  const current = steps[status] || 1; // ✅ MUST be first
+
+  for (let i = 1; i <= 4; i++) {
+
+    const step = document.getElementById(`step-${getStepName(i)}`);
+
+    if (!step) continue; // safety
+
+    if (i < current) {
+      step.classList.add("completed");
+    } else if (i === current) {
+      step.classList.add("active");
+    }
+  }
+}
+
+function getStepName(i) {
+  return ["ordered","shipped","out","delivered"][i-1];
+}
+
+function renderTimeline(order) {
+  const timeline = document.getElementById("timeline");
+
+  const events = [
+    { text: "Order placed", date: order.date },
+    { text: "Shipped", date: order.shipped_date },
+    { text: "Out for delivery", date: order.out_date },
+    { text: "Delivered", date: order.delivered_date }
+  ];
+
+  timeline.innerHTML = events.map(e => `
+    <div class="timeline-item ${e.date ? "active" : ""}">
+      <p>${e.text}</p>
+      <small>${e.date ? new Date(e.date).toLocaleString() : "Pending"}</small>
+    </div>
+  `).join("");
+}
+</script>
+
+</body>
+</html>

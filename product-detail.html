@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Product details page">
+  <title>Product Details - TheBoys Fashion Store</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/responsive.css">
+  
+  <style>
+    .product-detail-page {
+      padding: var(--spacing-xl) 0;
+    }
+    
+    .product-detail {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-xl);
+      margin-bottom: var(--spacing-xl);
+    }
+    
+    .product-gallery {
+      position: sticky;
+      top: 100px;
+      height: fit-content;
+    }
+    
+    .gallery-main {
+      position: relative;
+      width: 100%;
+      padding-top: 100%;
+      background: var(--bg-secondary);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      margin-bottom: var(--spacing-md);
+      cursor: zoom-in;
+    }
+    
+    .gallery-main img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    .zoom-lens {
+      position: absolute;
+      border: 2px solid var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+      pointer-events: none;
+      display: none;
+      z-index: 10;
+    }
+    
+    .zoom-result {
+      position: absolute;
+      top: 0;
+      right: -110%;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      display: none;
+      z-index: 20;
+      box-shadow: var(--shadow-xl);
+    }
+    
+    .zoom-result img {
+      width: 200%;
+      height: 200%;
+      object-fit: cover;
+    }
+    
+    .gallery-main:hover .zoom-result {
+      display: block;
+    }
+    
+    .zoom-btn {
+      position: absolute;
+      bottom: var(--spacing-sm);
+      right: var(--spacing-sm);
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      padding: var(--spacing-xs);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.25rem;
+    }
+    
+    .gallery-thumbnails {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-xs);
+    }
+    
+    .gallery-thumbnails img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: var(--transition-fast);
+    }
+    
+    .gallery-thumbnails img:hover,
+    .gallery-thumbnails img.active {
+      border-color: var(--primary);
+    }
+    
+    .product-info {
+      padding: var(--spacing-md);
+    }
+    
+    .product-brand {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: var(--spacing-xs);
+    }
+    
+    .product-title {
+      font-size: 2rem;
+      margin-bottom: var(--spacing-md);
+      color: var(--text-primary);
+    }
+    
+    .product-pricing {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin: var(--spacing-lg) 0;
+    }
+    
+    .product-variants {
+      margin: var(--spacing-lg) 0;
+    }
+    
+    .variant-group {
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .variant-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: var(--spacing-xs);
+      color: var(--text-primary);
+    }
+    
+    .variant-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+    }
+    
+    .variant-btn {
+      padding: 0.75rem 1.5rem;
+      border: 2px solid var(--border-color);
+      background: var(--bg-primary);
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    .variant-btn:hover,
+    .variant-btn.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    
+    .product-actions {
+      display: flex;
+      gap: var(--spacing-md);
+      margin: var(--spacing-lg) 0;
+    }
+    
+    .wishlist-btn-detail {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--border-radius-sm);
+      border: 2px solid var(--border-color);
+      background: var(--bg-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .wishlist-btn-detail:hover,
+    .wishlist-btn-detail.active {
+      border-color: var(--secondary);
+      background: var(--secondary);
+      color: white;
+    }
+    
+    .product-features {
+      margin-top: var(--spacing-lg);
+      padding-top: var(--spacing-lg);
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-xs);
+      color: var(--text-secondary);
+    }
+    
+    .product-reviews-section {
+      margin-top: var(--spacing-xl);
+      padding-top: var(--spacing-xl);
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .review-item {
+      background: var(--bg-secondary);
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius-sm);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-xs);
+    }
+    
+    .review-rating {
+      display: flex;
+      gap: 2px;
+    }
+    
+    .review-comment {
+      color: var(--text-secondary);
+      margin-top: var(--spacing-xs);
+    }
+    
+    @media (max-width: 768px) {
+      .product-detail {
+        grid-template-columns: 1fr;
+      }
+      
+      .product-gallery {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar-content">
+      <a href="index.html" class="logo">TheBoys</a>
+      
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="products.html?category=men">Men</a></li>
+        <li><a href="products.html?category=women">Women</a></li>
+        <li><a href="products.html?category=kids">Kids</a></li>
+        <li><a href="products.html">All Products</a></li>
+      </ul>
+      
+      <div class="nav-actions">
+        <button class="icon-btn" id="search-btn" aria-label="Search" onclick="window.location.href='search.html'">
+          🔍
+        </button>
+        <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+          🌙
+        </button>
+        <a href="wishlist.html" class="icon-btn" aria-label="Wishlist">
+          ♡
+        </a>
+        <a href="cart.html" class="icon-btn" aria-label="Cart">
+          🛒
+          <span class="badge cart-badge" style="display: none;">0</span>
+        </a>
+        <a href="login.html" class="icon-btn" aria-label="Account">
+          👤
+        </a>
+        <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+          ☰
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Product Detail Page -->
+  <main class="product-detail-page">
+    <div class="container">
+      <div id="product-detail-container">
+        <!-- Product details will be loaded here -->
+        <div style="text-align: center; padding: var(--spacing-2xl);">
+          <div class="loader"></div>
+          <p style="margin-top: var(--spacing-md);">Loading product...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>About TheBoys</h4>
+          <p>Premium fashion store.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="products.html">All Products</a></li>
+            <li><a href="products.html?category=men">Men's</a></li>
+            <li><a href="products.html?category=women">Women's</a></li>
+            <li><a href="products.html?category=kids">Kids</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 TheBoys Fashion Store. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module" src="js/main.js"></script>
+  <script type="module">
+    import { loadProductDetail } from './js/product-detail.js';
+    import { getURLParams } from './js/utils.js';
+    
+    const params = getURLParams();
+    const productId = params.id;
+    
+    if (productId) {
+      loadProductDetail(productId);
+    } else {
+      window.location.href = 'products.html';
+    }
+  </script>
+</body>
+</html>
+
