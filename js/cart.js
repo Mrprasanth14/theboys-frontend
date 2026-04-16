@@ -30,7 +30,7 @@ class Cart {
         name: product.name,
         brand: product.brand,
         price: product.price,
-        image: product.image,
+        image: product.image_url,
         size,
         color,
         quantity

@@ -72,12 +72,19 @@ const initMobileMenu = () => {
 // Load products from JSON
 export async function loadProducts(){
 
-  const response = await fetch("/api/products");
+  try {
+    const response = await fetch("http://localhost:3000/api/products");
 
-  const products = await response.json();
-  
-console.log("Products from ApI",products);
-  return products;
+    const products = await response.json();
+
+    console.log("Products from API:", products);
+
+    return products;
+
+  } catch (err) {
+    console.error("Fetch error:", err);
+    return [];
+  }
 
 }
 export async function loadMenProducts() {
@@ -142,7 +149,20 @@ container.innerHTML = menProducts.map(p => `
 `).join("");
 
 }
+//update wishlistcount//
+function updateWishlistBadge() {
+  const badge = document.querySelector('.wishlist-badge');
+  if (!badge) return;
 
+  const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+  if (wishlist.length > 0) {
+    badge.style.display = "inline-block";
+    badge.textContent = wishlist.length;
+  } else {
+    badge.style.display = "none";
+  }
+}
 // Render product cards
 export const renderProductCards = (products, container) => {
 
@@ -162,7 +182,7 @@ export const renderProductCards = (products, container) => {
 
   container.innerHTML = products.map(product => {
 
-    const isWishlisted = wishlist.includes(product.id);
+    const isWishlisted = wishlist.some(item => item.id === product.id);
 
     return `
       <div class="product-card" data-product-id="${product.id}">
@@ -210,60 +230,58 @@ Buy Now
 
   }).join("");
 
-
+//
 
   // Wishlist click
   container.querySelectorAll('.wishlist-btn').forEach(btn => {
 
-    btn.addEventListener('click', (e) => {
-
-      e.stopPropagation();
-
-      const productId = parseInt(btn.dataset.productId);
-
-      let wishlist = storage.get('wishlist') || [];
-
-      const index = wishlist.indexOf(productId);
-
-      if (index > -1) {
-
-        wishlist.splice(index, 1);
-        btn.classList.remove('active');
-        btn.textContent = '♡';
-
-      } else {
-
-        wishlist.push(productId);
-        btn.classList.add('active');
-        btn.textContent = '♥';
-
-      }
-
-      storage.set('wishlist', wishlist);
-
-    });
-
-  });
-
-  // Add to Cart//
-  container.querySelectorAll('.cart-btn').forEach(btn => {
-
   btn.addEventListener('click', (e) => {
-
     e.stopPropagation();
 
     const productId = parseInt(btn.dataset.productId);
+    let wishlist = storage.get('wishlist') || [];
 
+    const index = wishlist.findIndex(item => item.id === productId);
+
+    if (index > -1) {
+      // ❌ REMOVE from wishlist
+      wishlist.splice(index, 1);
+
+      btn.classList.remove('active');
+      btn.textContent = '♡';
+
+      // 🔥 If we are in wishlist page → remove card instantly
+      const card = btn.closest('.product-card');
+      if (card) card.remove();
+
+    } else {
+      // ❤️ ADD to wishlist
+      const product = products.find(p => p.id === productId);
+      wishlist.push(product);
+
+      btn.classList.add('active');
+      btn.textContent = '♥';
+    }
+
+    storage.set('wishlist', wishlist);
+
+  });
+
+});
+  container.querySelectorAll('.cart-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    const productId = parseInt(btn.dataset.productId);
     const product = products.find(p => p.id === productId);
-
     if (!product) return;
 
-    const size = container.querySelector(`.size-select[data-product-id="${productId}"]`).value;
-    const color = container.querySelector(`.color-select[data-product-id="${productId}"]`).value;
-    const qty = parseInt(container.querySelector(`.qty-input[data-product-id="${productId}"]`).value);
+    // Use default size, color, quantity
+    const size = product.sizes ? product.sizes[0] : "M";
+    const color = product.colors ? product.colors[0] : "Default";
+    const qty = 1;
 
     cart.addItem(product, size, color, qty);
-
     updateCartBadge();
 
     Swal.fire({
@@ -272,11 +290,8 @@ Buy Now
       timer: 1200,
       showConfirmButton: false
     });
-
   });
-
 });
-
 
 // Buy Now
 container.querySelectorAll('.buy-btn').forEach(btn => {

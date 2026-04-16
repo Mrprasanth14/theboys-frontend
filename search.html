@@ -372,22 +372,40 @@
       loadRecentSearches();
     }
     
-    function performSearch(query) {
-      if (!query.trim()) {
-        suggestionsDiv.style.display = 'block';
-        searchResultsDiv.style.display = 'none';
-        noResultsDiv.style.display = 'none';
-        return;
-      }
-      
-      suggestionsDiv.style.display = 'none';
-      const searchLower = query.toLowerCase();
-      let results = allProducts.filter(product => 
-        product.name.toLowerCase().includes(searchLower) ||
-        product.brand.toLowerCase().includes(searchLower) ||
-        product.tags.some(tag => tag.toLowerCase().includes(searchLower))
-      );
-      
+   async function performSearch(query) {
+  if (!query.trim()) return;
+
+  const category = document.getElementById('search-category').value;
+  const priceRange = document.getElementById('search-price').value;
+  const rating = document.getElementById('search-rating').value;
+  const sortBy = document.getElementById('search-sort').value;
+
+  let minPrice = "", maxPrice = "";
+  if (priceRange) {
+    [minPrice, maxPrice] = priceRange.split("-");
+  }
+
+  try {
+    const res = await fetch(
+      `http://localhost:3000/api/search?q=${query}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}&rating=${rating}&sort=${sortBy}`
+    );
+
+    const results = await res.json();
+
+    if (results.length > 0) {
+      searchResultsDiv.style.display = 'block';
+      noResultsDiv.style.display = 'none';
+      renderProductCards(results, resultsGrid);
+      resultsCount.textContent = `${results.length} results`;
+    } else {
+      searchResultsDiv.style.display = 'none';
+      noResultsDiv.style.display = 'block';
+    }
+
+  } catch (error) {
+    console.error("Search error:", error);
+  }
+}
       // Apply advanced filters
       const category = document.getElementById('search-category').value;
       const priceRange = document.getElementById('search-price').value;
@@ -433,7 +451,6 @@
         searchResultsDiv.style.display = 'none';
         noResultsDiv.style.display = 'block';
       }
-    }
     
     // Advanced filter change handlers
     ['search-category', 'search-price', 'search-rating', 'search-sort'].forEach(id => {
