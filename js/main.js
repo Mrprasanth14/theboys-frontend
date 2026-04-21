@@ -73,7 +73,7 @@ const initMobileMenu = () => {
 export async function loadProducts(){
 
   try {
-    const response = await fetch("http://localhost:3000/api/products");
+    const response = await fetch("https://theboys-backend.onrender.com/api/products");
 
     const products = await response.json();
 
