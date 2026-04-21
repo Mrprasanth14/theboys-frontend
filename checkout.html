@@ -557,7 +557,7 @@ if (selectedPayment === 'cod') {
     
     async function saveOrder(orderData) {
   try {
-    const res = await fetch("http://localhost:3000/api/create-order", {
+    const res = await fetch("https://theboys-backend.onrender.com/api/create-order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

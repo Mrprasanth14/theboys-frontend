@@ -366,99 +366,44 @@ window.downloadInvoice = function(orderId) {
   const container = document.getElementById('orders-container');
 
   try {
-    const res = await fetch("http://localhost:3000/api/orders");
-    const orders = await res.json();
+    const token = localStorage.getItem("token");
 
-    console.log("Orders:", orders); // DEBUG
-
-    if (orders.length === 0) {
-      container.innerHTML = `
-        <div class="empty-orders">
-          <h2>No orders yet</h2>
-          <p>Start shopping to see your orders here!</p>
-        </div>
-      `;
+    if (!token) {
+      container.innerHTML = "<p>Please login first</p>";
       return;
     }
-  container.innerHTML = orders.map(order => `
-  <div class="order-box">
 
-    <!-- Top Summary -->
-    <div class="order-top">
-      <div>
-        <span class="label">ORDER PLACED</span>
-        <p>${new Date(order.date).toLocaleDateString()}</p>
-      </div>
-
-      <div>
-        <span class="label">TOTAL</span>
-        <p>₹${order.total}</p>
-      </div>
-
-      <div>
-        <span class="label">STATUS</span>
-        <p class="status ${order.status.toLowerCase()}">${order.status}</p>
-      </div>
-
-      <div>
-        <span class="label">ORDER #</span>
-        <p>${order.id}</p>
-      </div>
-    </div>
-
-    <!-- Progress Bar -->
-    <div class="progress-container">
-      <div class="progress-bar ${order.status.toLowerCase()}"></div>
-    </div>
-
-    <!-- Delivery Info -->
-    <div class="delivery-info">
-      ${
-        order.status === "Delivered"
-          ? `<p class="delivered">✔ Delivered on ${new Date(order.delivered_date).toDateString()}</p>`
-          : `<p>Expected delivery: ${new Date(order.expected_date).toDateString()}</p>`
+    const res = await fetch("https://theboys-backend.onrender.com/api/orders", {
+      headers: {
+        "Authorization": `Bearer ${token}`
       }
-    </div>
+    });
 
-    <!-- Items -->
-    <div class="order-body">
-      ${
-        order.items.map(item => `
-          <div class="order-row">
-            <img src="${item.image}" />
+    console.log("Response status:", res.status);
 
-            <div class="order-details">
-              <h4>${item.name}</h4>
-              <p>${item.brand}</p>
-              <span>Qty: ${item.quantity}</span>
-            </div>
+    if (!res.ok) {
+      const text = await res.text();
+      console.log("Server error:", text);
+      throw new Error("API failed");
+    }
 
-            <div class="order-price">₹${item.price}</div>
+    const data = await res.json();
+    console.log("Full API data:", data);
 
-            <div class="order-actions-mini">
-              <button onclick="buyAgain(${item.id})">Buy Again</button>
-            </div>
-          </div>
-        `).join("")
-      }
-    </div>
+    const orders = data.orders || data;
 
-    <!-- Bottom Actions -->
-    <div class="order-actions">
-      <button onclick="trackOrder(${order.id})" class="btn-outline">Track Order</button>
-      <button onclick="downloadInvoice(${order.id})" class="btn-primary">Invoice</button>
-    </div>
+    if (!orders || orders.length === 0) {
+      container.innerHTML = "<p>No orders found</p>";
+      return;
+    }
 
-  </div>
-`).join("");
-    
+    container.innerHTML = "<h2>Orders Loaded Successfully ✅</h2>";
+
   } catch (err) {
-    console.log(err);
+    console.log("ERROR:", err);
     container.innerHTML = "<p>Server error loading orders</p>";
   }
 }
-    
-    loadOrders();
   </script>
 </body>
 </html>

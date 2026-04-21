@@ -191,7 +191,7 @@ console.log("Order ID:", orderId);
 
 document.getElementById("order-id").innerText = orderId || "Not Found";
 
-fetch(`http://localhost:3000/api/orders/${orderId}`)
+fetch(`https://theboys-backend.onrender.com/api/orders/${orderId}`)
   .then(res => res.json())
   .then(order => {
 

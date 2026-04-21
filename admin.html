@@ -552,7 +552,7 @@ const shopId = shopEl.value;
   };
 
   try {
-    const res = await fetch("http://localhost:3000/add-product", {
+    const res = await fetch("https://theboys-backend.onrender.com/add-product", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(productData)

@@ -158,57 +158,62 @@ Already have an account? <a href="login.html">Login</a>
 
 <script>
 
-document.getElementById("signup-form").addEventListener("submit", async function(e){
+document.getElementById("signup-form").addEventListener("submit", async function (e) {
+  e.preventDefault();
 
-e.preventDefault();
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const mobile = document.getElementById("mobile").value;
 
-const name = document.getElementById("name").value;
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-const mobile = document.getElementById("mobile").value;
-
-const response = await fetch("/signup",{
-
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({name,email,password,mobile})
-
+  try {
+    const response = await fetch("https://theboys-backend.onrender.com/api/signup", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ name, email, password, mobile })
 });
 
-const data = await response.json();
+    const data = await response.json();
+    console.log("Signup response:", data);
 
-if(data.success){
+    if (data.success) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Signup Successful',
+        text: 'Account created successfully'
+      }).then(() => {
+        window.location.href = "login.html";
+      });
 
-Swal.fire({
-icon:'success',
-title:'Signup Successful',
-text:'Account created successfully'
-}).then(()=>{
-window.location.href="login.html";
-});
+    } else {
 
-}else{
+      if (data.message === "exists") {
+        Swal.fire({ icon: 'error', title: 'Email Exists' });
+      }
+      else if (data.message === "invalid_email") {
+        Swal.fire({ icon: 'error', title: 'Invalid Email' });
+      }
+      else if (data.message === "weak_password") {
+        Swal.fire({ icon: 'error', title: 'Password must be 6+ characters' });
+      }
+      else if (data.message === "invalid_mobile") {
+        Swal.fire({ icon: 'error', title: 'Mobile must be 10 digits' });
+      }
+      else {
+        Swal.fire({ icon: 'error', title: 'Signup Failed' });
+      }
+    }
 
-if(data.message==="exists"){
-Swal.fire({icon:'error',title:'Email Exists'});
-}
-else if(data.message==="invalid_email"){
-Swal.fire({icon:'error',title:'Invalid Email'});
-}
-else if(data.message==="weak_password"){
-Swal.fire({icon:'error',title:'Password must be 6+ characters'});
-}
-else if(data.message==="invalid_mobile"){
-Swal.fire({icon:'error',title:'Mobile must be 10 digits'});
-}
-else{
-Swal.fire({icon:'error',title:'Signup Failed'});
-}
-
-}
+  } catch (err) {
+    console.log("Error:", err);
+    Swal.fire({
+      icon: 'error',
+      title: 'Server Error',
+      text: 'Cannot connect to backend'
+    });
+  }
 });
 </script>
 </body>
