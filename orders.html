@@ -391,7 +391,7 @@ window.downloadInvoice = function(orderId) {
   const container = document.getElementById('orders-container');
 
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("adminToken");
 
     if (!token) {
       container.innerHTML = "<p>Please login first</p>";
