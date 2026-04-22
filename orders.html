@@ -387,7 +387,7 @@ window.downloadInvoice = function(orderId) {
   })
   .catch(err => console.log(err));
 };
-   async function loadOrders() {
+async function loadOrders() {
   const container = document.getElementById('orders-container');
 
   try {
@@ -429,6 +429,7 @@ window.downloadInvoice = function(orderId) {
     container.innerHTML = "<p>Server error loading orders</p>";
   }
 }
+loadOrders();
   </script>
 </body>
 </html>
