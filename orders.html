@@ -346,12 +346,25 @@
     <!-- import { formatPrice } from './js/utils.js'; -->
     <script>
 window.buyAgain = function(productId) {
-  fetch(`http://localhost:3000/api/cart/add`, {
+  fetch("https://theboys-backend.onrender.com/api/cart/add", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({ productId, quantity: 1 })
   })
-  .then(() => alert("Added to cart!"));
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert("Added to cart!");
+    } else {
+      alert("Failed to add");
+    }
+  })
+  .catch(err => {
+    console.log("❌ Error:", err);
+    alert("Server error");
+  });
 };
 
 window.trackOrder = function(orderId) {
@@ -360,7 +373,19 @@ window.trackOrder = function(orderId) {
 };
 
 window.downloadInvoice = function(orderId) {
-  window.open(`http://localhost:3000/api/orders/${orderId}/invoice`);
+  const token = localStorage.getItem("adminToken");
+
+  fetch(`https://theboys-backend.onrender.com/api/orders/${orderId}/invoice`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  })
+  .then(res => res.text())
+  .then(html => {
+    const win = window.open();
+    win.document.write(html);
+  })
+  .catch(err => console.log(err));
 };
    async function loadOrders() {
   const container = document.getElementById('orders-container');
