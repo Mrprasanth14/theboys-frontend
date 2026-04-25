@@ -183,7 +183,7 @@ document.getElementById("login-form").addEventListener("submit", async function(
     const token = data.token || data.accessToken;
 
     if (token) {
-      localStorage.setItem("token", token);
+      localStorage.setItem("adminToken", token);
 
       Swal.fire({
         icon: 'success',

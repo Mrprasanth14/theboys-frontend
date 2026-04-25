@@ -422,13 +422,26 @@ async function loadOrders() {
       return;
     }
 
-    container.innerHTML = "<h2>Orders Loaded Successfully ✅</h2>";
+    // 🔥 SHOW ORDERS
+    container.innerHTML = "";
+
+    orders.forEach(order => {
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <p><b>Product:</b> ${order.product}</p>
+        <p><b>Status:</b> ${order.status || "Pending"}</p>
+        <hr/>
+      `;
+      container.appendChild(div);
+    });
 
   } catch (err) {
     console.log("ERROR:", err);
     container.innerHTML = "<p>Server error loading orders</p>";
   }
 }
+
+// Call only once
 loadOrders();
   </script>
 </body>
