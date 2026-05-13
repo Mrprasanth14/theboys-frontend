@@ -373,7 +373,7 @@ window.trackOrder = function(orderId) {
 };
 
 window.downloadInvoice = function(orderId) {
-  const token = localStorage.getItem("adminToken");
+  const token = localStorage.getItem("Token");
 
   fetch(`https://theboys-backend.onrender.com/api/orders/${orderId}/invoice`, {
     headers: {
@@ -391,7 +391,7 @@ async function loadOrders() {
   const container = document.getElementById('orders-container');
 
   try {
-    const token = localStorage.getItem("adminToken");
+    const token = localStorage.getItem("Token");
    console.log("Token",token);
     if (!token) {
       container.innerHTML = "<p>Please login first</p>";
