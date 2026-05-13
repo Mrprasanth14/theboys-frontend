@@ -392,7 +392,7 @@ async function loadOrders() {
 
   try {
     const token = localStorage.getItem("adminToken");
-
+   console.log("Token",token);
     if (!token) {
       container.innerHTML = "<p>Please login first</p>";
       return;
