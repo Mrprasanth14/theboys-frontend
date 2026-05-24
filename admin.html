@@ -158,8 +158,12 @@
       </ul>
       
       <div class="nav-actions">
-        <a href="index.html" class="btn btn-outline">Back to Store</a>
-      </div>
+  <a href="index.html" class="btn btn-outline">Back to Store</a>
+
+  <button onclick="logout()" class="btn btn-primary">
+    Logout
+  </button>
+</div>
     </div>
   </nav>
 
@@ -342,7 +346,20 @@ fetch("https://theboys-backend.onrender.com/api/orders", {
         if (tabName === 'orders') loadOrdersList();
       });
     });
-    
+    //logout//
+    window.logout = function() {
+
+  fetch("https://theboys-backend.onrender.com/api/logout", {
+    method: "POST",
+    credentials: "include"
+  })
+  .then(() => {
+
+    window.location.href = "adminlogin.html";
+
+  });
+
+}
     // Load stats
  async function loadStats() {
   try {
